@@ -51,6 +51,30 @@ server.get('/api/users', (req, res) => {
   })
 })
 
+// GET a specific user
+server.get('/api/users/:id', (req, res) => {
+  // request a user by id parameter
+  users.findById(req.params.id)
+  // user id is found,
+  .then(user => {
+    if (user) {
+      // respond with status of OK and user object
+      res.status(200).json(user)
+      //otherwise
+    } else {
+      // respond with 'not found' error and json message
+      res.status(404).json({ error: 'The user with the specified ID does not exist.'})
+    }
+  })
+  // if there is an error in retrieving the user from the db,
+  .catch(err => {
+    // respond with internal server error status and json error message
+    res.status(500).json({ error: 'The user information could not be retrieved.'})
+  })
+})
+
+
+
 //listen on port 5000
 server.listen(5000, () => {
   console.log('Server is running on port 5000.');
