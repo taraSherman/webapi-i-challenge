@@ -37,8 +37,21 @@ server.post('/api/users', (req, res) => {
   }
 })
 
+// get all user objects on the server
+server.get('/api/users', (req, res) => {
+  // request an array of all users in the db
+  users.find()
+  .then(users => {
+    //respond with the array of users
+    res.json(users)
+  })
+  .catch(err => {
+    // if an error, respond with internal server error and json error message
+    res.status(500).json({ error: 'The users information could not be retrieved.'})
+  })
+})
 
-
+//listen on port 5000
 server.listen(5000, () => {
   console.log('Server is running on port 5000.');
 })
