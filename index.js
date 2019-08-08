@@ -73,6 +73,29 @@ server.get('/api/users/:id', (req, res) => {
   })
 })
 
+// delete specific user object
+server.delete('/api/users/:id', (req, res) => {
+  // define id
+  const { id } = req.params
+  // request to delete user object with the specified id
+  users.remove(id)
+  .then(deletedUser => {
+    // if that id is found, return deleted user
+    if (deletedUser) {
+      res.json(deletedUser)
+      // otherwise
+    } else {
+      // respond with 'not found' error and json message
+      res.status(404).json({ message: 'The user with the specified ID does not exist.'})
+    }
+  })
+  // if there is an error in deleting a user,
+  .catch(err => {
+    // respond with an internal server error adn json error message
+    res.status(500).jason({ error: 'The user could not be removed.'})
+  })
+})
+
 
 
 //listen on port 5000
