@@ -99,32 +99,31 @@ server.delete('/api/users/:id', (req, res) => {
 // update specific user
 server.put('/api/users/:id', (req, res) => {
   // define request body and id
+  const changes = req.body;
   const { name, bio } = req.body;
   const { id } = req.params;
-  // request to update id, name, & body parameters
-  users.update(id, name, bio)
-    .then(updatedUser => {
-      // if the specified id is not found,
-      if(updatedUser !== user.id) {
-        // respond with "not found" status and json message
-        res.status(404).json({ message: 'The user with the specified ID does not exist.'})
-        // otherwise, if name or bio is not found,
-      } else if (!name || !bio) {
-        //respond with 'bad request' status and json error message
-        res.status(400).json({ errorMessage: 'Please provide name and bio for the user.'})
-        // otherwise, respond with 'ok' status and updated user
+  // request to update id & changes to be made parameters
+  if (!name || !bio) {
+    //respond with 'bad request' status and json error message
+    res.status(400).json({ errorMessage: 'Please provide name and bio for the user.'})
+  } else {
+    users.update(id, changes)
+    .then(user => {
+      if (user) {
+        res.status(200).json(changes)
       } else {
-        res.status(200).json(updatedUser)
+        res.status(404).json({ message: 'The user with the specified ID does not exist.'})
       }
     })
     // if there is an error updating user,
-    .catch (err => {
+    .catch(err => {
       // return 'internal server error' status and json error message
       res.status(500).json({ error: 'The user information could not be modified.'})
     })
-})
+  };
+});
 
 //listen on port 5000
 server.listen(5000, () => {
   console.log('Server is running on port 5000.');
-})
+});
